@@ -19,8 +19,7 @@ o Use the frequency spin box to set the desired frequency.
 2. Start Plotting:
 o Press the "Start" button to begin plotting the sine wave. The button text will
 change to "Stop".
-o The y-axis range will dynamically adjust to offset - 4 * amplitude to offset
-+ 4 * amplitude.
+o The y-axis range will dynamically adjust to offset - 4 * amplitude to offset + 4 * amplitude.
 3. Stop Plotting:
 o Press the "Stop" button to stop plotting the sine wave. The button text will change
 back to "Start".
