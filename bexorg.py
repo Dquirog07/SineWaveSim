@@ -23,17 +23,17 @@ class Window(QWidget):
         tLabel = QLabel("Sine Wave Real-Time")
         yLabel = QLabel("Amplitude")
         xLabel = QLabel("                Time (s)")
-        self.aSpinBox = QSpinBox()
-        self.oSpinBox = QSpinBox()
-        self.fSpinBox = QSpinBox()
+        self.aSpinBox = QDoubleSpinBox()
+        self.oSpinBox = QDoubleSpinBox()
+        self.fSpinBox = QDoubleSpinBox()
         
         # Set maximum values for spin boxes and default values
-        self.aSpinBox.setMaximum(10000)
-        self.aSpinBox.setValue(1)
-        self.oSpinBox.setMaximum(10000)
-        self.oSpinBox.setValue(0)
-        self.fSpinBox.setMaximum(10000)
-        self.fSpinBox.setValue(1)
+        self.aSpinBox.setMaximum(10000.0)
+        self.aSpinBox.setValue(1.0)
+        self.oSpinBox.setMaximum(10000.0)
+        self.oSpinBox.setValue(0.0)
+        self.fSpinBox.setMaximum(10000.0)
+        self.fSpinBox.setValue(1.0)
         
         self.startStopButton = QPushButton("&Start")  # Start/Stop button
         self.viewer = pg.PlotWidget()  # Plot widget for displaying the sine wave
@@ -110,9 +110,9 @@ class Worker(QThread):
         super(Worker, self).__init__(parent)
         self.exiting = False  # Flag to control the thread loop
         self.size = QSize(0, 0)  # Size of the plotting area
-        self.amplitude = 0  # Amplitude of the sine wave
-        self.offset = 0  # Offset of the sine wave
-        self.frequency = 0  # Frequency of the sine wave
+        self.amplitude = 0.0  # Amplitude of the sine wave
+        self.offset = 0.0  # Offset of the sine wave
+        self.frequency = 0.0  # Frequency of the sine wave
         self.data = []  # List to store sine wave data
         self.start_time = None  # Store the start time
 
@@ -154,6 +154,5 @@ if __name__ == "__main__":
     window = Window()  # Create main window
     window.show()  # Show the window
     sys.exit(app.exec_())  # Run the application
-
 
 
