@@ -37,8 +37,7 @@ class Window(QWidget):
         
         self.startStopButton = QPushButton("&Start")  # Start/Stop button
         self.viewer = pg.PlotWidget()  # Plot widget for displaying the sine wave
-        self.viewer.setYRange(-100, 100)  # Set y-axis range for the plot
-        self.viewer.setXRange(0, 60)  # Set x-axis range for 60 seconds
+        self.viewer.setXRange(0, 3)  # Set initial x-axis range to 3 seconds
         
         self.thread.output.connect(self.update_plot)  # Connect thread output signal to update_plot method
         self.startStopButton.clicked.connect(self.togglePlotting)  # Connect button to togglePlotting method
@@ -74,7 +73,10 @@ class Window(QWidget):
         self.fSpinBox.setReadOnly(True)  # Make frequency input read-only
         self.startStopButton.setText("Stop")  # Change button text to "Stop"
         self.plotting = True  # Set plotting flag to True
-        self.thread.render(self.viewer.size(), self.aSpinBox.value(), self.oSpinBox.value(), self.fSpinBox.value())  # Start the worker thread
+        amplitude = self.aSpinBox.value()
+        offset = self.oSpinBox.value()
+        self.viewer.setYRange(offset - 4 * amplitude, offset + 4 * amplitude)  # Set y-axis range based on amplitude and offset
+        self.thread.render(self.viewer.size(), amplitude, offset, self.fSpinBox.value())  # Start the worker thread
         self.timer.start(60000)  # Save data every 60 seconds
 
     # Stop the plotting
@@ -94,6 +96,10 @@ class Window(QWidget):
 
     # Update the plot with new data
     def update_plot(self, x, y):
+        if x[-1] <= 3:
+            self.viewer.setXRange(0, 3)  # Keep x-axis fixed for the first 3 seconds
+        else:
+            self.viewer.setXRange(x[-1] - 3, x[-1])  # Pan the plot to follow the sine wave after 3 seconds
         self.viewer.plot(x, y, clear=True)
 
 # Worker thread class
@@ -129,7 +135,7 @@ class Worker(QThread):
         while not self.exiting:
             current_time = datetime.datetime.now()
             elapsed_time = (current_time - self.start_time).total_seconds()
-            x = np.linspace(elapsed_time - 60, elapsed_time, 1000)  # Generate x values over the last 60 seconds
+            x = np.linspace(max(0, elapsed_time - 3), elapsed_time, 1000)  # Generate x values from 0 to elapsed time
             y = self.amplitude * np.sin(2 * np.pi * self.frequency * x) + self.offset  # Generate y values for the sine wave
             timestamp = current_time.strftime("%Y-%m-%d %H:%M:%S.%f")  # Get current timestamp
             self.data.append((timestamp, y.tolist()))  # Append timestamp and y values to data list
